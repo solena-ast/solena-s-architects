@@ -747,69 +747,71 @@
   max-width: 34rem;
 }
 
-.environment-plane {
-  position: absolute;
+/* ============== Morphing global backdrop ============== */
+.morphing-backdrop {
+  position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.44;
+  overflow: hidden;
 }
 
-.environment-image {
+.backdrop-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 1400ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2400ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1400ms ease;
+  filter: blur(2px);
+  will-change: opacity, transform;
+}
+
+.backdrop-layer.is-active {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+.backdrop-image {
   width: 100%;
   height: 100%;
-  object-position: center;
-  filter: saturate(0.88) brightness(0.66) contrast(1.02) blur(0px);
-  transform: scale(1.03);
+  object-fit: cover;
+  filter: saturate(0.92) brightness(0.7) contrast(1.04);
 }
 
-.environment-overlay {
+.backdrop-overlay {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0.22), rgba(10, 10, 10, 0.82)),
-    radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.52) 72%);
+    linear-gradient(180deg, rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.78)),
+    radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.55) 72%);
 }
 
-.environment-overlay-light {
+.backdrop-light .backdrop-overlay {
   background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0.14), rgba(10, 10, 10, 0.74)),
-    radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.5) 74%);
+    linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.7)),
+    radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.45) 74%);
 }
 
-.environment-overlay-strong {
+.backdrop-strong .backdrop-overlay {
   background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.88)),
-    radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.6) 74%);
+    linear-gradient(180deg, rgba(10, 10, 10, 0.42), rgba(10, 10, 10, 0.88)),
+    radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.65) 70%);
 }
 
-.environment-hero {
-  opacity: 0.5;
+.backdrop-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  pointer-events: none;
 }
 
-.environment-hero .environment-image {
-  object-position: center;
-}
-
-.environment-thesis {
-  opacity: 0.3;
-}
-
-.environment-transformation {
-  opacity: 0.38;
-}
-
-.environment-future {
-  opacity: 0.35;
-}
-
-.environment-future .environment-image {
-  object-position: center 24%;
-}
-
-.environment-invitation {
-  opacity: 0.24;
-}
+/* Wordmark image — desktop hides it, mobile uses it */
+.hero-wordmark { display: none; }
+.hero-title-desktop { display: block; }
 
 .reveal,
 .reveal-delayed,
@@ -903,43 +905,68 @@
   }
 
   .solena-section {
-    padding: 4.5rem 0;
+    padding: 4rem 0;
   }
 
   .hero-inner,
   .section-shell,
   .section-shell-wide,
   .section-shell-narrow {
-    width: min(100% - 1.5rem, 100%);
+    width: min(100% - 1.25rem, 100%);
+  }
+
+  .solena-hero {
+    padding-top: 3rem;
+    padding-bottom: 4rem;
   }
 
   .hero-inner {
-    gap: 1.25rem;
-    padding-top: 2rem;
-    padding-bottom: 5rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 3rem;
+    text-align: left;
   }
 
-  .artifact-shell {
-    min-height: 22rem;
+  /* Hide circular floating logo on mobile, show wordmark instead */
+  .artifact-shell { display: none; }
+  .hero-title-desktop { display: none; }
+
+  .hero-wordmark {
+    display: block;
+    width: min(20rem, 78%);
+    margin: 0 0 0.25rem;
+    filter: drop-shadow(0 0 28px rgba(255, 220, 170, 0.18));
+    animation: revealUp 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .artifact-mark {
-    width: min(22rem, 78%);
+  .hero-copy {
+    gap: 0.85rem;
+    max-width: 100%;
   }
 
-  .hero-copy h1 {
-    font-size: clamp(4rem, 24vw, 6.5rem);
+  .hero-statement {
+    font-size: clamp(1.25rem, 5.2vw, 1.65rem);
+    max-width: 24rem;
+  }
+
+  .hero-subline {
+    font-size: 0.95rem;
+    max-width: 20rem;
   }
 
   .section-header h2,
+  .thesis-body p {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+
   .standard-lines p,
   .standard-final,
   .future-final,
   .invitation-final,
   .transformation-row span,
-  .transformation-row strong,
-  .thesis-body p {
-    font-size: clamp(2rem, 11vw, 3.2rem);
+  .transformation-row strong {
+    font-size: clamp(1.9rem, 8.5vw, 2.8rem);
   }
 
   .solena-button {
@@ -953,40 +980,67 @@
 
   .build-card,
   .journal-card {
-    min-height: 16rem;
+    min-height: 14rem;
+    padding: 1.2rem;
+  }
+
+  .ecosystem-layout {
+    gap: 1.5rem;
   }
 
   .ecosystem-map {
-    min-height: 22rem;
+    min-height: min(86vw, 26rem);
+    width: min(86vw, 26rem);
+    margin: 0 auto;
   }
 
   .center-node {
-    width: 6.8rem;
-    height: 6.8rem;
-    font-size: 1.2rem;
+    width: 5.6rem;
+    height: 5.6rem;
+    font-size: 1rem;
   }
 
   .orbit-node {
-    width: 5.8rem;
-    height: 5.8rem;
-    font-size: 0.62rem;
+    width: 4.8rem;
+    height: 4.8rem;
+    font-size: 0.58rem;
+    padding: 0.4rem;
   }
 
   .transformation-row {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: 0.35rem;
+    padding: 0.85rem 0;
   }
 
   .transformation-row i {
-    width: 3rem;
+    width: 2.5rem;
   }
 
-  .environment-plane {
-    opacity: 0.42;
+  /* Make morphing backdrop visibly present on mobile */
+  .backdrop-image {
+    filter: saturate(1) brightness(0.78) contrast(1.05);
   }
 
-  .environment-image {
-    object-position: center;
+  .backdrop-overlay {
+    background:
+      linear-gradient(180deg, rgba(10, 10, 10, 0.22), rgba(10, 10, 10, 0.7)),
+      radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.45) 78%);
+  }
+
+  .backdrop-strong .backdrop-overlay {
+    background:
+      linear-gradient(180deg, rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.82)),
+      radial-gradient(circle at center, transparent, rgba(10, 10, 10, 0.58) 76%);
+  }
+
+  .future-shell {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  .invitation-shell {
+    min-height: auto;
   }
 }
 
