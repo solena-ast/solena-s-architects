@@ -150,7 +150,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section thesis-section">
+      <section className="solena-section thesis-section" id="thesis">
         <ResponsiveBackdrop
           landscape={haloLandscape.url}
           portrait={haloPortrait.url}
@@ -179,7 +179,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section build-section">
+      <section className="solena-section build-section" id="build">
         <div className="section-shell">
           <div className="section-header reveal">
             <p className="eyebrow">02 / What we build</p>
@@ -242,7 +242,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section standard-section">
+      <section className="solena-section standard-section" id="standard">
         <div className="section-shell section-shell-narrow">
           <div className="standard-lines reveal">
             <p>We do not optimize for speed.</p>
@@ -260,7 +260,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section transitions-section">
+      <section className="solena-section transitions-section" id="transformations">
         <ResponsiveBackdrop
           landscape={gravityLandscape.url}
           portrait={gravityPortrait.url}
@@ -287,7 +287,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section journal-section">
+      <section className="solena-section journal-section" id="journal">
         <div className="section-shell section-shell-wide">
           <div className="section-header reveal">
             <p className="eyebrow">05 / The journal</p>
@@ -305,7 +305,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section future-section">
+      <section className="solena-section future-section" id="future">
         <ResponsiveBackdrop
           landscape={futureLandscape.url}
           portrait={futurePortrait.url}
@@ -334,7 +334,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section invitation-section">
+      <section className="solena-section invitation-section" id="invitation">
         <ResponsiveBackdrop
           landscape={gravityLandscape.url}
           portrait={invitationPortrait.url}
