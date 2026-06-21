@@ -89,8 +89,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
+        // Display stack (substitutes for licensed faces):
+        //   Fraunces  → Ogg (display / hero)
+        //   Cormorant Garamond → Canela (mid display)
+        //   Playfair Display → Noe Display (editorial)
+        //   EB Garamond italic → Reckless / Ivar (sacred italic)
+        //   Inter Tight → Aeonik (body)
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Cormorant+Garamond:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;1,400;1,500&family=Inter+Tight:wght@300;400;500;600&display=swap",
       },
       {
         rel: "stylesheet",

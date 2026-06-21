@@ -44,8 +44,14 @@
 }
 
 :root {
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-body: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  /* Typography roles — swap commercial woff2 in behind these vars later */
+  --font-ogg: "Fraunces", "Cormorant Garamond", Georgia, serif;       /* hero / titles */
+  --font-noe: "Playfair Display", "Fraunces", Georgia, serif;          /* editorial display */
+  --font-canela: "Cormorant Garamond", "Fraunces", Georgia, serif;     /* mid display */
+  --font-reckless: "EB Garamond", "Playfair Display", Georgia, serif;  /* sacred italic */
+  --font-aeonik: "Inter Tight", "Helvetica Neue", Arial, sans-serif;   /* body */
+  --font-display: var(--font-ogg);
+  --font-body: var(--font-aeonik);
   --radius: 0.5rem;
   --background: oklch(0.14 0 0);
   --foreground: oklch(0.95 0.012 85);
