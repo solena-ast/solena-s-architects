@@ -1,29 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { SolenaPage } from "@/components/solena-page";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "SOLENA — Luxury Growth Studio" },
+      {
+        name: "description",
+        content:
+          "SOLENA is a luxury growth studio building gravity for culture, capital, legacy, and future institutions.",
+      },
+      { property: "og:title", content: "SOLENA — Luxury Growth Studio" },
+      {
+        property: "og:description",
+        content:
+          "A cinematic entrance into SOLENA, where brands, spaces, ventures, and cultural systems are engineered into legacy institutions.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "SOLENA — Luxury Growth Studio" },
+      {
+        name: "twitter:description",
+        content:
+          "We build gravity for culture, capital, and legacy through cinematic strategy, design, and institutional thinking.",
+      },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  return <SolenaPage />;
 }
