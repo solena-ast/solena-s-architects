@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/section-nav";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
 import spiralLandscape from "@/assets/spiral.png.asset.json";
 import spiralPortrait from "@/assets/spiral-potrait.png.asset.json";
@@ -100,9 +101,22 @@ export function SolenaPage() {
     [],
   );
 
+  const sections: SectionEntry[] = [
+    { id: "hero", label: "Entrance" },
+    { id: "thesis", label: "Thesis" },
+    { id: "build", label: "What We Build" },
+    { id: "ecosystem", label: "Ecosystem" },
+    { id: "standard", label: "The Standard" },
+    { id: "transformations", label: "Transformations" },
+    { id: "journal", label: "The Journal" },
+    { id: "future", label: "Solena 2035" },
+    { id: "invitation", label: "Invitation" },
+  ];
+
   return (
     <main className="solena-page">
-      <section className="solena-hero">
+      <SectionNav sections={sections} />
+      <section className="solena-hero" id="hero">
         <ResponsiveBackdrop
           landscape={spiralLandscape.url}
           portrait={spiralPortrait.url}
@@ -118,8 +132,12 @@ export function SolenaPage() {
           <div className="hero-copy reveal-slower">
             <p className="eyebrow">Future institution</p>
             <h1>SOLENA</h1>
-            <p className="hero-statement">We build gravity for culture, capital, and legacy.</p>
-            <p className="hero-subline">Luxury is not created. It is engineered.</p>
+            <AnimatedLines as="p" className="hero-statement" stagger={70}>
+              We build gravity for culture, capital, and legacy.
+            </AnimatedLines>
+            <AnimatedLines as="p" className="hero-subline" delay={500} stagger={50}>
+              Luxury is not created. It is engineered.
+            </AnimatedLines>
             <div className="hero-actions">
               <a href="#ecosystem" className="solena-button">
                 <span>Enter the Ecosystem</span>
@@ -136,7 +154,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section thesis-section">
+      <section className="solena-section thesis-section" id="thesis">
         <ResponsiveBackdrop
           landscape={haloLandscape.url}
           portrait={haloPortrait.url}
@@ -165,7 +183,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section build-section">
+      <section className="solena-section build-section" id="build">
         <div className="section-shell">
           <div className="section-header reveal">
             <p className="eyebrow">02 / What we build</p>
@@ -228,17 +246,23 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section standard-section">
+      <section className="solena-section standard-section" id="standard">
         <div className="section-shell section-shell-narrow">
-          <div className="standard-lines reveal">
-            <p>We do not optimize for speed.</p>
-            <p>We optimize for permanence.</p>
-            <p>We do not follow trends.</p>
-            <p>We define signals.</p>
-            <p>We do not build for markets.</p>
-            <p>We build for memory.</p>
-            <p>We do not design for visibility.</p>
-            <p>We design for inevitability.</p>
+          <div className="standard-lines">
+            {[
+              "We do not optimize for speed.",
+              "We optimize for permanence.",
+              "We do not follow trends.",
+              "We define signals.",
+              "We do not build for markets.",
+              "We build for memory.",
+              "We do not design for visibility.",
+              "We design for inevitability.",
+            ].map((line, i) => (
+              <AnimatedLines key={line} as="p" delay={i * 220} stagger={45}>
+                {line}
+              </AnimatedLines>
+            ))}
           </div>
           <p className="standard-final reveal-slower">
             If it cannot exist for decades, we do not build it.
@@ -246,7 +270,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section transitions-section">
+      <section className="solena-section transitions-section" id="transformations">
         <ResponsiveBackdrop
           landscape={gravityLandscape.url}
           portrait={gravityPortrait.url}
@@ -273,7 +297,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section journal-section">
+      <section className="solena-section journal-section" id="journal">
         <div className="section-shell section-shell-wide">
           <div className="section-header reveal">
             <p className="eyebrow">05 / The journal</p>
@@ -291,7 +315,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section future-section">
+      <section className="solena-section future-section" id="future">
         <ResponsiveBackdrop
           landscape={futureLandscape.url}
           portrait={futurePortrait.url}
@@ -320,7 +344,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      <section className="solena-section invitation-section">
+      <section className="solena-section invitation-section" id="invitation">
         <ResponsiveBackdrop
           landscape={gravityLandscape.url}
           portrait={invitationPortrait.url}
