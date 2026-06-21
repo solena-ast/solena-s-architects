@@ -132,8 +132,12 @@ export function SolenaPage() {
           <div className="hero-copy reveal-slower">
             <p className="eyebrow">Future institution</p>
             <h1>SOLENA</h1>
-            <p className="hero-statement">We build gravity for culture, capital, and legacy.</p>
-            <p className="hero-subline">Luxury is not created. It is engineered.</p>
+            <AnimatedLines as="p" className="hero-statement" stagger={70}>
+              We build gravity for culture, capital, and legacy.
+            </AnimatedLines>
+            <AnimatedLines as="p" className="hero-subline" delay={500} stagger={50}>
+              Luxury is not created. It is engineered.
+            </AnimatedLines>
             <div className="hero-actions">
               <a href="#ecosystem" className="solena-button">
                 <span>Enter the Ecosystem</span>
