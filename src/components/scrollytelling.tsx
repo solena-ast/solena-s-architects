@@ -174,7 +174,6 @@ export function AmbientVideo({
       loop
       playsInline
       preload="metadata"
-      // @ts-expect-error react types miss disable*
       disablePictureInPicture
       style={{ objectPosition }}
       aria-hidden="true"
