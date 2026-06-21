@@ -248,15 +248,21 @@ export function SolenaPage() {
 
       <section className="solena-section standard-section" id="standard">
         <div className="section-shell section-shell-narrow">
-          <div className="standard-lines reveal">
-            <p>We do not optimize for speed.</p>
-            <p>We optimize for permanence.</p>
-            <p>We do not follow trends.</p>
-            <p>We define signals.</p>
-            <p>We do not build for markets.</p>
-            <p>We build for memory.</p>
-            <p>We do not design for visibility.</p>
-            <p>We design for inevitability.</p>
+          <div className="standard-lines">
+            {[
+              "We do not optimize for speed.",
+              "We optimize for permanence.",
+              "We do not follow trends.",
+              "We define signals.",
+              "We do not build for markets.",
+              "We build for memory.",
+              "We do not design for visibility.",
+              "We design for inevitability.",
+            ].map((line, i) => (
+              <AnimatedLines key={line} as="p" delay={i * 220} stagger={45}>
+                {line}
+              </AnimatedLines>
+            ))}
           </div>
           <p className="standard-final reveal-slower">
             If it cannot exist for decades, we do not build it.
