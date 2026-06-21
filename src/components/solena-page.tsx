@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/section-nav";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
 import spiralLandscape from "@/assets/spiral.png.asset.json";
 import spiralPortrait from "@/assets/spiral-potrait.png.asset.json";
