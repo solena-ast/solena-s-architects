@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/section-nav";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
+import solenaWordmark from "@/assets/solena-wordmark.png.asset.json";
 import spiralLandscape from "@/assets/spiral.png.asset.json";
 import spiralPortrait from "@/assets/spiral-potrait.png.asset.json";
 import gravityLandscape from "@/assets/gravity-1.1.png.asset.json";
@@ -32,22 +33,10 @@ const journalEntries = [
 ] as const;
 
 const buildCards = [
-  {
-    title: "Culture",
-    description: "Brands people belong to, not buy.",
-  },
-  {
-    title: "Space",
-    description: "Architecture as identity.",
-  },
-  {
-    title: "Media",
-    description: "Narrative systems that compound influence.",
-  },
-  {
-    title: "Ventures",
-    description: "Businesses designed for decades.",
-  },
+  { title: "Culture", description: "Brands people belong to, not buy." },
+  { title: "Space", description: "Architecture as identity." },
+  { title: "Media", description: "Narrative systems that compound influence." },
+  { title: "Ventures", description: "Businesses designed for decades." },
 ] as const;
 
 const transformations = [
@@ -57,31 +46,76 @@ const transformations = [
   ["A business", "A legacy asset"],
 ] as const;
 
-function ResponsiveBackdrop({
-  landscape,
-  portrait,
-  alt,
-  className = "",
-  overlayClassName = "",
-  fit = "cover",
-}: {
+type BackdropLayer = {
+  id: string;
   landscape: string;
-  portrait?: string;
-  alt: string;
-  className?: string;
-  overlayClassName?: string;
-  fit?: "cover" | "contain";
-}) {
-  const objectClass = fit === "contain" ? "object-contain" : "object-cover";
+  portrait: string;
+  variant?: "default" | "light" | "strong";
+  focal?: string; // object-position
+};
 
+const backdropLayers: BackdropLayer[] = [
+  { id: "hero", landscape: spiralLandscape.url, portrait: spiralPortrait.url, variant: "light", focal: "center" },
+  { id: "thesis", landscape: haloLandscape.url, portrait: haloPortrait.url, variant: "default", focal: "center 30%" },
+  { id: "build", landscape: haloLandscape.url, portrait: haloPortrait.url, variant: "strong", focal: "center 70%" },
+  { id: "ecosystem", landscape: spiralLandscape.url, portrait: spiralPortrait.url, variant: "strong", focal: "center" },
+  { id: "standard", landscape: gravityLandscape.url, portrait: gravityPortrait.url, variant: "strong", focal: "center 40%" },
+  { id: "transformations", landscape: gravityLandscape.url, portrait: gravityPortrait.url, variant: "default", focal: "center" },
+  { id: "journal", landscape: futureLandscape.url, portrait: futurePortrait.url, variant: "strong", focal: "center 30%" },
+  { id: "future", landscape: futureLandscape.url, portrait: futurePortrait.url, variant: "light", focal: "center 24%" },
+  { id: "invitation", landscape: gravityLandscape.url, portrait: invitationPortrait.url, variant: "default", focal: "center" },
+];
+
+function useActiveSection(ids: string[]): string {
+  const [active, setActive] = useState<string>(ids[0] ?? "");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+    if (!elements.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Pick the entry closest to viewport center
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target?.id) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-35% 0px -50% 0px", threshold: [0, 0.15, 0.35, 0.6, 1] },
+    );
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [ids.join("|")]);
+  return active;
+}
+
+function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: BackdropLayer[] }) {
   return (
-    <div className={`environment-plane ${className}`.trim()} aria-hidden="true">
-      <picture>
-        {portrait ? <source media="(max-width: 768px)" srcSet={portrait} /> : null}
-        <source media="(min-width: 1024px)" srcSet={landscape} />
-        <img src={portrait ?? landscape} alt={alt} className={`environment-image ${objectClass}`} />
-      </picture>
-      <div className={`environment-overlay ${overlayClassName}`.trim()} />
+    <div className="morphing-backdrop" aria-hidden="true">
+      {layers.map((layer) => {
+        const isActive = layer.id === activeId;
+        return (
+          <div
+            key={layer.id}
+            className={`backdrop-layer backdrop-${layer.variant ?? "default"} ${isActive ? "is-active" : ""}`}
+          >
+            <picture>
+              <source media="(max-width: 768px)" srcSet={layer.portrait} />
+              <source media="(min-width: 1024px)" srcSet={layer.landscape} />
+              <img
+                src={layer.portrait}
+                alt=""
+                loading="lazy"
+                className="backdrop-image"
+                style={{ objectPosition: layer.focal ?? "center" }}
+              />
+            </picture>
+            <div className="backdrop-overlay" />
+          </div>
+        );
+      })}
+      <div className="backdrop-vignette" />
     </div>
   );
 }
@@ -95,7 +129,6 @@ export function SolenaPage() {
         const angle = (index / orbitSectors.length) * Math.PI * 2 - Math.PI / 2;
         const x = 50 + Math.cos(angle) * 37;
         const y = 50 + Math.sin(angle) * 37;
-
         return { label, x, y };
       }),
     [],
@@ -113,17 +146,14 @@ export function SolenaPage() {
     { id: "invitation", label: "Invitation" },
   ];
 
+  const activeSection = useActiveSection(sections.map((s) => s.id));
+
   return (
     <main className="solena-page">
+      <MorphingBackdrop activeId={activeSection} layers={backdropLayers} />
       <SectionNav sections={sections} />
+
       <section className="solena-hero" id="hero">
-        <ResponsiveBackdrop
-          landscape={spiralLandscape.url}
-          portrait={spiralPortrait.url}
-          alt="Luminous circular Solena atmosphere"
-          className="environment-hero"
-          fit="cover"
-        />
         <div className="solena-noise" aria-hidden="true" />
         <div className="hero-inner">
           <div className="artifact-shell reveal-slow">
@@ -131,7 +161,13 @@ export function SolenaPage() {
           </div>
           <div className="hero-copy reveal-slower">
             <p className="eyebrow">Future institution</p>
-            <h1>SOLENA</h1>
+            <img
+              src={solenaWordmark.url}
+              alt="SOLENA"
+              className="hero-wordmark"
+              loading="eager"
+            />
+            <h1 className="hero-title-desktop">SOLENA</h1>
             <AnimatedLines as="p" className="hero-statement" stagger={70}>
               We build gravity for culture, capital, and legacy.
             </AnimatedLines>
@@ -155,13 +191,6 @@ export function SolenaPage() {
       </section>
 
       <section className="solena-section thesis-section" id="thesis">
-        <ResponsiveBackdrop
-          landscape={haloLandscape.url}
-          portrait={haloPortrait.url}
-          alt="Dust field forming a circular halo"
-          className="environment-thesis"
-          fit="cover"
-        />
         <div className="section-shell section-shell-wide">
           <div className="section-header reveal">
             <p className="eyebrow">01 / Thesis</p>
@@ -271,14 +300,6 @@ export function SolenaPage() {
       </section>
 
       <section className="solena-section transitions-section" id="transformations">
-        <ResponsiveBackdrop
-          landscape={gravityLandscape.url}
-          portrait={gravityPortrait.url}
-          alt="Luminous matter gathering in space"
-          className="environment-transformation"
-          overlayClassName="environment-overlay-strong"
-          fit="cover"
-        />
         <div className="section-shell section-shell-wide">
           <div className="section-header reveal">
             <p className="eyebrow">04 / Transformations</p>
@@ -316,14 +337,6 @@ export function SolenaPage() {
       </section>
 
       <section className="solena-section future-section" id="future">
-        <ResponsiveBackdrop
-          landscape={futureLandscape.url}
-          portrait={futurePortrait.url}
-          alt="Monumental field of future resonance"
-          className="environment-future"
-          overlayClassName="environment-overlay-light"
-          fit="cover"
-        />
         <div className="section-shell section-shell-wide future-shell">
           <div className="section-header reveal">
             <p className="eyebrow">06 / Future</p>
@@ -345,14 +358,6 @@ export function SolenaPage() {
       </section>
 
       <section className="solena-section invitation-section" id="invitation">
-        <ResponsiveBackdrop
-          landscape={gravityLandscape.url}
-          portrait={invitationPortrait.url}
-          alt="Quiet invitation field of luminous matter"
-          className="environment-invitation"
-          overlayClassName="environment-overlay-strong"
-          fit="cover"
-        />
         <div className="section-shell section-shell-narrow invitation-shell">
           <div className="section-header reveal">
             <p className="eyebrow">07 / Invitation</p>
