@@ -170,7 +170,7 @@ export function AnimatedLines({
     return () => io.disconnect();
   }, []);
 
-  const words = children.split(" ");
+  const words = children.replace(/\s+/g, " ").trim().split(" ");
   return (
     <As
       ref={ref as never}
