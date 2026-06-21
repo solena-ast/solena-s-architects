@@ -84,19 +84,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "SOLENA" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "SOLENA" },
+      { name: "twitter:title", content: "SOLENA" },
+      { name: "description", content: "Solena's Architects builds legacy institutions from brands, spaces, and ventures." },
+      { property: "og:description", content: "Solena's Architects builds legacy institutions from brands, spaces, and ventures." },
+      { name: "twitter:description", content: "Solena's Architects builds legacy institutions from brands, spaces, and ventures." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/tfURF2LHhuglw3L7R4E1lKoOrzN2/social-images/social-1782041920158-gravity-1.1.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/tfURF2LHhuglw3L7R4E1lKoOrzN2/social-images/social-1782041920158-gravity-1.1.webp" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
-        // Display stack (substitutes for licensed faces):
-        //   Fraunces  → Ogg (display / hero)
-        //   Cormorant Garamond → Canela (mid display)
-        //   Playfair Display → Noe Display (editorial)
-        //   EB Garamond italic → Reckless / Ivar (sacred italic)
-        //   Inter Tight → Aeonik (body)
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Cormorant+Garamond:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;1,400;1,500&family=Inter+Tight:wght@300;400;500;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap",
       },
       {
         rel: "stylesheet",
