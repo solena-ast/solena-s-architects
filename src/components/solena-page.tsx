@@ -91,10 +91,33 @@ function useActiveSection(ids: string[]): string {
 }
 
 function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: BackdropLayer[] }) {
+  const activeIndex = Math.max(0, layers.findIndex((l) => l.id === activeId));
+  // Eagerly load the active layer + the next two so cross-fades are instant on scroll.
+  const eagerWindow = new Set<string>(
+    [activeIndex, activeIndex + 1, activeIndex + 2]
+      .filter((i) => i >= 0 && i < layers.length)
+      .map((i) => layers[i]!.id),
+  );
+  // The very next layer is also preloaded via <link rel="preload"> for the
+  // browser preload scanner — picks the right source per viewport.
+  const nextLayer = layers[activeIndex + 1];
+  const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
+
   return (
     <div className="morphing-backdrop" aria-hidden="true">
-      {layers.map((layer) => {
+      {nextLayer ? (
+        <link
+          rel="preload"
+          as="image"
+          href={isMobile ? nextLayer.portrait : nextLayer.landscape}
+          // @ts-expect-error: React types miss imagesrcset/fetchpriority
+          fetchpriority="low"
+        />
+      ) : null}
+      {layers.map((layer, index) => {
         const isActive = layer.id === activeId;
+        const isEager = eagerWindow.has(layer.id);
+        const isFirst = index === 0;
         return (
           <div
             key={layer.id}
@@ -106,7 +129,10 @@ function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: Back
               <img
                 src={layer.portrait}
                 alt=""
-                loading="lazy"
+                loading={isEager ? "eager" : "lazy"}
+                decoding="async"
+                // @ts-expect-error: React types miss fetchpriority
+                fetchpriority={isFirst ? "high" : isActive ? "high" : "low"}
                 className="backdrop-image"
                 style={{ objectPosition: layer.focal ?? "center" }}
               />
