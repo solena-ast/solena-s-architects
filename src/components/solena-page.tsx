@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/section-nav";
-import { Scene, AmbientVideo, SacredLine } from "@/components/scrollytelling";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
 import solenaWordmark from "@/assets/solena-wordmark.png.asset.json";
 import spiralLandscape from "@/assets/spiral.png.asset.json";
@@ -13,18 +12,6 @@ import haloPortrait from "@/assets/vie-potrait.png.asset.json";
 import futureLandscape from "@/assets/Gemini_Generated_Image_ttgdtyttgdtyttgd.png.asset.json";
 import futurePortrait from "@/assets/resonance-2-potrait.png.asset.json";
 import invitationPortrait from "@/assets/g-01.1-potrait.png.asset.json";
-
-// New assets
-import gWide from "@/assets/g-01-wide.png.asset.json";
-import art17 from "@/assets/art-17.png.asset.json";
-import abstract from "@/assets/abstract.png.asset.json";
-import sigil from "@/assets/sigil-001.png.asset.json";
-import field from "@/assets/field.png.asset.json";
-import art07 from "@/assets/art-07.png.asset.json";
-import vieHaloVid from "@/assets/vie-halo.mp4.asset.json";
-import gPortraitVid from "@/assets/g-01-portrait.mp4.asset.json";
-import resonanceVid from "@/assets/resonance.mp4.asset.json";
-import gVid from "@/assets/g-01.mp4.asset.json";
 
 const orbitSectors = [
   "Real Estate",
@@ -46,10 +33,10 @@ const journalEntries = [
 ] as const;
 
 const buildCards = [
-  { title: "Culture", description: "Brands people belong to, not buy.", image: art17.url },
-  { title: "Space", description: "Architecture as identity.", image: field.url },
-  { title: "Media", description: "Narrative systems that compound influence.", image: art07.url },
-  { title: "Ventures", description: "Businesses designed for decades.", image: abstract.url },
+  { title: "Culture", description: "Brands people belong to, not buy." },
+  { title: "Space", description: "Architecture as identity." },
+  { title: "Media", description: "Narrative systems that compound influence." },
+  { title: "Ventures", description: "Businesses designed for decades." },
 ] as const;
 
 const transformations = [
@@ -64,19 +51,19 @@ type BackdropLayer = {
   landscape: string;
   portrait: string;
   variant?: "default" | "light" | "strong";
-  focal?: string;
+  focal?: string; // object-position
 };
 
 const backdropLayers: BackdropLayer[] = [
   { id: "hero", landscape: spiralLandscape.url, portrait: spiralPortrait.url, variant: "light", focal: "center" },
-  { id: "thesis", landscape: art17.url, portrait: haloPortrait.url, variant: "default", focal: "center 30%" },
+  { id: "thesis", landscape: haloLandscape.url, portrait: haloPortrait.url, variant: "default", focal: "center 30%" },
   { id: "build", landscape: haloLandscape.url, portrait: haloPortrait.url, variant: "strong", focal: "center 70%" },
-  { id: "ecosystem", landscape: field.url, portrait: spiralPortrait.url, variant: "strong", focal: "center" },
-  { id: "standard", landscape: abstract.url, portrait: gravityPortrait.url, variant: "strong", focal: "center 40%" },
+  { id: "ecosystem", landscape: spiralLandscape.url, portrait: spiralPortrait.url, variant: "strong", focal: "center" },
+  { id: "standard", landscape: gravityLandscape.url, portrait: gravityPortrait.url, variant: "strong", focal: "center 40%" },
   { id: "transformations", landscape: gravityLandscape.url, portrait: gravityPortrait.url, variant: "default", focal: "center" },
   { id: "journal", landscape: futureLandscape.url, portrait: futurePortrait.url, variant: "strong", focal: "center 30%" },
-  { id: "future", landscape: gWide.url, portrait: futurePortrait.url, variant: "light", focal: "center 24%" },
-  { id: "invitation", landscape: art07.url, portrait: invitationPortrait.url, variant: "default", focal: "center" },
+  { id: "future", landscape: futureLandscape.url, portrait: futurePortrait.url, variant: "light", focal: "center 24%" },
+  { id: "invitation", landscape: gravityLandscape.url, portrait: invitationPortrait.url, variant: "default", focal: "center" },
 ];
 
 function useActiveSection(ids: string[]): string {
@@ -89,6 +76,7 @@ function useActiveSection(ids: string[]): string {
     if (!elements.length) return;
     const observer = new IntersectionObserver(
       (entries) => {
+        // Pick the entry closest to viewport center
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
@@ -104,11 +92,14 @@ function useActiveSection(ids: string[]): string {
 
 function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: BackdropLayer[] }) {
   const activeIndex = Math.max(0, layers.findIndex((l) => l.id === activeId));
+  // Eagerly load the active layer + the next two so cross-fades are instant on scroll.
   const eagerWindow = new Set<string>(
     [activeIndex, activeIndex + 1, activeIndex + 2]
       .filter((i) => i >= 0 && i < layers.length)
       .map((i) => layers[i]!.id),
   );
+  // The very next layer is also preloaded via <link rel="preload"> for the
+  // browser preload scanner — picks the right source per viewport.
   const nextLayer = layers[activeIndex + 1];
   const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
 
@@ -119,7 +110,7 @@ function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: Back
           rel="preload"
           as="image"
           href={isMobile ? nextLayer.portrait : nextLayer.landscape}
-          // @ts-expect-error fetchpriority
+          // @ts-expect-error: React types miss imagesrcset/fetchpriority
           fetchpriority="low"
         />
       ) : null}
@@ -140,7 +131,7 @@ function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: Back
                 alt=""
                 loading={isEager ? "eager" : "lazy"}
                 decoding="async"
-                // @ts-expect-error fetchpriority
+                // @ts-expect-error: React types miss fetchpriority
                 fetchpriority={isFirst ? "high" : isActive ? "high" : "low"}
                 className="backdrop-image"
                 style={{ objectPosition: layer.focal ?? "center" }}
@@ -157,7 +148,6 @@ function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: Back
 
 export function SolenaPage() {
   const [activeSector, setActiveSector] = useState<string>(orbitSectors[0]);
-  const heroRef = useRef<HTMLDivElement | null>(null);
 
   const sectorPositions = useMemo(
     () =>
@@ -184,59 +174,27 @@ export function SolenaPage() {
 
   const activeSection = useActiveSection(sections.map((s) => s.id));
 
-  // Hero parallax — anime.js-driven pointer drift on the artifact
-  useEffect(() => {
-    const root = heroRef.current;
-    if (!root) return;
-    let raf = 0;
-    let tx = 0,
-      ty = 0,
-      cx = 0,
-      cy = 0;
-    const onMove = (e: PointerEvent) => {
-      const r = root.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width - 0.5) * 24;
-      ty = ((e.clientY - r.top) / r.height - 0.5) * 24;
-    };
-    const tick = () => {
-      cx += (tx - cx) * 0.06;
-      cy += (ty - cy) * 0.06;
-      const artifact = root.querySelector<HTMLElement>(".artifact-shell");
-      const word = root.querySelector<HTMLElement>(".hero-wordmark");
-      if (artifact) artifact.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
-      if (word) word.style.transform = `translate3d(${cx * 0.4}px, ${cy * 0.4}px, 0)`;
-      raf = requestAnimationFrame(tick);
-    };
-    root.addEventListener("pointermove", onMove);
-    raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      root.removeEventListener("pointermove", onMove);
-    };
-  }, []);
-
   return (
     <main className="solena-page">
       <MorphingBackdrop activeId={activeSection} layers={backdropLayers} />
       <SectionNav sections={sections} />
 
-      {/* ============== HERO ============== */}
-      <section className="solena-hero" id="hero" ref={heroRef as never}>
+      <section className="solena-hero" id="hero">
         <div className="solena-noise" aria-hidden="true" />
-        <div className="hero-video-frame" aria-hidden="true">
-          <AmbientVideo src={vieHaloVid.url} className="hero-video" />
-          <div className="hero-video-vignette" />
-        </div>
         <div className="hero-inner">
           <div className="artifact-shell reveal-slow">
-            <img src={sigil.url} alt="" className="artifact-mark" loading="eager" />
-            <img src={solenaLogo.url} alt="Solena halo mark" className="artifact-mark artifact-mark--inner" loading="eager" />
+            <img src={solenaLogo.url} alt="Solena circular halo mark" className="artifact-mark" loading="eager" />
           </div>
           <div className="hero-copy reveal-slower">
             <p className="eyebrow">Future institution</p>
-            <img src={solenaWordmark.url} alt="SOLENA" className="hero-wordmark" loading="eager" />
-            <h1 className="hero-title-desktop type-ogg">SOLENA</h1>
-            <AnimatedLines as="p" className="hero-statement type-canela" stagger={70}>
+            <img
+              src={solenaWordmark.url}
+              alt="SOLENA"
+              className="hero-wordmark"
+              loading="eager"
+            />
+            <h1 className="hero-title-desktop">SOLENA</h1>
+            <AnimatedLines as="p" className="hero-statement" stagger={70}>
               We build gravity for culture, capital, and legacy.
             </AnimatedLines>
             <AnimatedLines as="p" className="hero-subline" delay={500} stagger={50}>
@@ -258,68 +216,55 @@ export function SolenaPage() {
         </div>
       </section>
 
-      {/* ============== THESIS — scrollytelling scene ============== */}
-      <Scene id="thesis" className="solena-section thesis-section" height="auto">
+      <section className="solena-section thesis-section" id="thesis">
         <div className="section-shell section-shell-wide">
-          <div className="section-header">
-            <p className="eyebrow" data-scene-layer="text">01 / Thesis</p>
-            <h2 className="type-noe" data-scene-layer="text">The Solena Thesis</h2>
+          <div className="section-header reveal">
+            <p className="eyebrow">01 / Thesis</p>
+            <h2>The Solena Thesis</h2>
           </div>
           <div className="thesis-grid">
-            <div className="thesis-body">
-              {[
-                "Most organizations compete for attention.",
-                "Solena builds gravity.",
-                "Gravity does not advertise. It attracts.",
-                "It attracts capital that thinks long-term.",
-                "It attracts founders who think in decades.",
-                "It attracts institutions that outlive trends.",
-                "We are not a service provider.",
-                "We are an acceleration layer for legacy.",
-              ].map((line) => (
-                <p key={line} data-scene-layer="text" className="type-canela">{line}</p>
-              ))}
+            <div className="thesis-body reveal-delayed">
+              <p>Most organizations compete for attention.</p>
+              <p>Solena builds gravity.</p>
+              <p>Gravity does not advertise. It attracts.</p>
+              <p>It attracts capital that thinks long-term.</p>
+              <p>It attracts founders who think in decades.</p>
+              <p>It attracts institutions that outlive trends.</p>
+              <p>We are not a service provider.</p>
+              <p>We are an acceleration layer for legacy.</p>
             </div>
-            <figure className="thesis-figure" data-scene-layer="image">
-              <img src={gWide.url} alt="A constellation of light forming over a still field" />
-              <figcaption>
-                <SacredLine>What we build cannot be commoditized.</SacredLine>
-              </figcaption>
-            </figure>
+            <p className="micro-copy reveal-slower">What we build cannot be commoditized.</p>
           </div>
         </div>
-      </Scene>
+      </section>
 
-      {/* ============== BUILD — image-led cards ============== */}
-      <Scene id="build" className="solena-section build-section" height="auto">
+      <section className="solena-section build-section" id="build">
         <div className="section-shell">
-          <div className="section-header">
-            <p className="eyebrow" data-scene-layer="text">02 / What we build</p>
-            <h2 className="type-noe" data-scene-layer="text">Systems with the patience of institutions.</h2>
+          <div className="section-header reveal">
+            <p className="eyebrow">02 / What we build</p>
+            <h2>Systems with the patience of institutions.</h2>
           </div>
           <div className="build-grid">
             {buildCards.map((card, index) => (
-              <article key={card.title} className="build-card image-card" data-scene-layer="image">
-                <img src={card.image} alt="" className="build-card-bg" loading="lazy" />
-                <div className="build-card-veil" />
+              <article
+                key={card.title}
+                className="build-card reveal"
+                style={{ animationDelay: `${index * 120}ms` }}
+              >
                 <span className="card-index">0{index + 1}</span>
-                <h3 className="type-canela">{card.title}</h3>
+                <h3>{card.title}</h3>
                 <p>{card.description}</p>
               </article>
             ))}
           </div>
         </div>
-      </Scene>
+      </section>
 
-      {/* ============== ECOSYSTEM with ambient video ============== */}
       <section className="solena-section ecosystem-section" id="ecosystem">
-        <div className="ecosystem-video-bed" aria-hidden="true">
-          <AmbientVideo src={gVid.url} className="ecosystem-video" />
-        </div>
         <div className="section-shell section-shell-wide">
           <div className="section-header reveal">
             <p className="eyebrow">03 / Ecosystem map</p>
-            <h2 className="type-noe">Everything connects. Nothing operates alone.</h2>
+            <h2>Everything connects. Nothing operates alone.</h2>
           </div>
           <div className="ecosystem-layout">
             <div className="ecosystem-copy reveal-delayed">
@@ -337,7 +282,7 @@ export function SolenaPage() {
                 onMouseEnter={() => setActiveSector("SOLENA")}
                 onFocus={() => setActiveSector("SOLENA")}
               >
-                <span className="type-canela">SOLENA</span>
+                <span>SOLENA</span>
               </button>
               {sectorPositions.map((sector) => (
                 <button
@@ -356,11 +301,7 @@ export function SolenaPage() {
         </div>
       </section>
 
-      {/* ============== STANDARD — scrollytelling text reveal ============== */}
-      <Scene id="standard" className="solena-section standard-section" height="auto">
-        <div className="standard-bg" data-scene-layer="bg" aria-hidden="true">
-          <img src={abstract.url} alt="" />
-        </div>
+      <section className="solena-section standard-section" id="standard">
         <div className="section-shell section-shell-narrow">
           <div className="standard-lines">
             {[
@@ -373,100 +314,80 @@ export function SolenaPage() {
               "We do not design for visibility.",
               "We design for inevitability.",
             ].map((line, i) => (
-              <AnimatedLines key={line} as="p" delay={i * 220} stagger={45} className="type-ogg">
+              <AnimatedLines key={line} as="p" delay={i * 220} stagger={45}>
                 {line}
               </AnimatedLines>
             ))}
           </div>
-          <p className="standard-final type-noe" data-scene-layer="text">
-            <SacredLine>If it cannot exist for decades,</SacredLine> we do not build it.
+          <p className="standard-final reveal-slower">
+            If it cannot exist for decades, we do not build it.
           </p>
         </div>
-      </Scene>
+      </section>
 
-      {/* ============== TRANSFORMATIONS with portrait video ============== */}
-      <Scene id="transformations" className="solena-section transitions-section" height="auto">
+      <section className="solena-section transitions-section" id="transformations">
         <div className="section-shell section-shell-wide">
-          <div className="section-header">
-            <p className="eyebrow" data-scene-layer="text">04 / Transformations</p>
-            <h2 className="type-noe" data-scene-layer="text">We do not execute projects. We shift states.</h2>
+          <div className="section-header reveal">
+            <p className="eyebrow">04 / Transformations</p>
+            <h2>We do not execute projects. We shift states.</h2>
           </div>
-          <div className="transitions-layout">
-            <div className="transformation-list">
-              {transformations.map(([from, to]) => (
-                <div className="transformation-row" data-scene-layer="text" key={from}>
-                  <span className="type-canela">{from}</span>
-                  <i aria-hidden="true" />
-                  <strong className="type-canela">{to}</strong>
-                </div>
-              ))}
-              <p className="micro-copy" data-scene-layer="text">Each engagement alters trajectory, not surface.</p>
-            </div>
-            <figure className="transitions-figure" data-scene-layer="image">
-              <AmbientVideo src={gPortraitVid.url} />
-            </figure>
+          <div className="transformation-list">
+            {transformations.map(([from, to], index) => (
+              <div className="transformation-row reveal" style={{ animationDelay: `${index * 120}ms` }} key={from}>
+                <span>{from}</span>
+                <i aria-hidden="true" />
+                <strong>{to}</strong>
+              </div>
+            ))}
           </div>
+          <p className="micro-copy reveal-delayed">Each engagement alters trajectory, not surface.</p>
         </div>
-      </Scene>
+      </section>
 
-      {/* ============== JOURNAL ============== */}
-      <Scene id="journal" className="solena-section journal-section" height="auto">
+      <section className="solena-section journal-section" id="journal">
         <div className="section-shell section-shell-wide">
-          <div className="section-header">
-            <p className="eyebrow" data-scene-layer="text">05 / The journal</p>
-            <h2 className="type-noe" data-scene-layer="text">Ideas before they become industries.</h2>
+          <div className="section-header reveal">
+            <p className="eyebrow">05 / The journal</p>
+            <h2>Ideas before they become industries.</h2>
           </div>
           <div className="journal-grid">
             {journalEntries.map((entry, index) => (
-              <article className="journal-card" data-scene-layer="image" key={entry}>
+              <article className="journal-card reveal" key={entry} style={{ animationDelay: `${index * 90}ms` }}>
                 <span className="card-index">0{index + 1}</span>
-                <h3 className="type-canela">{entry}</h3>
+                <h3>{entry}</h3>
                 <p>Read the pre-language</p>
               </article>
             ))}
           </div>
         </div>
-      </Scene>
+      </section>
 
-      {/* ============== FUTURE — pinned scene ============== */}
-      <Scene id="future" className="solena-section future-section" height="180vh">
-        <div className="future-stage" data-scene-layer="pin">
-          <div className="future-stage-video" aria-hidden="true">
-            <AmbientVideo src={resonanceVid.url} />
-            <div className="future-stage-veil" />
+      <section className="solena-section future-section" id="future">
+        <div className="section-shell section-shell-wide future-shell">
+          <div className="section-header reveal">
+            <p className="eyebrow">06 / Future</p>
+            <h2>Solena 2035</h2>
           </div>
-          <div className="section-shell section-shell-wide future-shell">
-            <div className="section-header">
-              <p className="eyebrow" data-scene-layer="text">06 / Future</p>
-              <h2 className="type-ogg" data-scene-layer="text">Solena 2035</h2>
-            </div>
-            <div className="future-grid">
-              <p data-scene-layer="text" className="type-canela">We are not building a company.</p>
-              <p data-scene-layer="text" className="type-canela">We are building an ecosystem of institutions.</p>
-              <ul>
-                <li>Cultural institutions</li>
-                <li>Luxury developments</li>
-                <li>Media architecture</li>
-                <li>Venture systems</li>
-                <li>Design laboratories</li>
-              </ul>
-              <p className="future-final type-noe" data-scene-layer="text">
-                <SacredLine>The present</SacredLine> is just the prototype.
-              </p>
-            </div>
+          <div className="future-grid reveal-delayed">
+            <p>We are not building a company.</p>
+            <p>We are building an ecosystem of institutions.</p>
+            <ul>
+              <li>Cultural institutions</li>
+              <li>Luxury developments</li>
+              <li>Media architecture</li>
+              <li>Venture systems</li>
+              <li>Design laboratories</li>
+            </ul>
+            <p className="future-final">The present is just the prototype.</p>
           </div>
         </div>
-      </Scene>
+      </section>
 
-      {/* ============== INVITATION ============== */}
       <section className="solena-section invitation-section" id="invitation">
-        <div className="invitation-bg" aria-hidden="true">
-          <img src={art07.url} alt="" />
-        </div>
         <div className="section-shell section-shell-narrow invitation-shell">
           <div className="section-header reveal">
             <p className="eyebrow">07 / Invitation</p>
-            <h2 className="type-noe">Access is not open. It is aligned.</h2>
+            <h2>Access is not open. It is aligned.</h2>
           </div>
           <div className="invitation-copy reveal-delayed">
             <p>We work with those building beyond cycles.</p>
@@ -479,8 +400,8 @@ export function SolenaPage() {
             </a>
           </div>
           <p className="micro-copy reveal-slower">Not everyone will be reviewed.</p>
-          <p className="invitation-final type-noe reveal-slower">
-            <SacredLine>If Solena is relevant to your trajectory,</SacredLine> you will know before we respond.
+          <p className="invitation-final reveal-slower">
+            If Solena is relevant to your trajectory, you will know before we respond.
           </p>
         </div>
       </section>

@@ -84,13 +84,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "SOLENA" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:title", content: "SOLENA" },
-      { name: "twitter:title", content: "SOLENA" },
-      { name: "description", content: "Solena's Architects builds legacy institutions from brands, spaces, and ventures." },
-      { property: "og:description", content: "Solena's Architects builds legacy institutions from brands, spaces, and ventures." },
-      { name: "twitter:description", content: "Solena's Architects builds legacy institutions from brands, spaces, and ventures." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/tfURF2LHhuglw3L7R4E1lKoOrzN2/social-images/social-1782041920158-gravity-1.1.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/tfURF2LHhuglw3L7R4E1lKoOrzN2/social-images/social-1782041920158-gravity-1.1.webp" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
