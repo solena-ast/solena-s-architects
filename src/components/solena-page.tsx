@@ -101,9 +101,22 @@ export function SolenaPage() {
     [],
   );
 
+  const sections: SectionEntry[] = [
+    { id: "hero", label: "Entrance" },
+    { id: "thesis", label: "Thesis" },
+    { id: "build", label: "What We Build" },
+    { id: "ecosystem", label: "Ecosystem" },
+    { id: "standard", label: "The Standard" },
+    { id: "transformations", label: "Transformations" },
+    { id: "journal", label: "The Journal" },
+    { id: "future", label: "Solena 2035" },
+    { id: "invitation", label: "Invitation" },
+  ];
+
   return (
     <main className="solena-page">
-      <section className="solena-hero">
+      <SectionNav sections={sections} />
+      <section className="solena-hero" id="hero">
         <ResponsiveBackdrop
           landscape={spiralLandscape.url}
           portrait={spiralPortrait.url}
