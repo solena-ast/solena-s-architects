@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/page-shell";
 import gLandscape from "@/assets/g-01.mp4.asset.json";
 import gPortrait from "@/assets/g-01-potrait.mp4.asset.json";
-import gPoster from "@/assets/g-01.png.asset.json";
+import gPoster from "@/assets/g-01.1-potrait.png.asset.json";
 
 export const Route = createFileRoute("/future")({
   head: () => ({
