@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/section-nav";
+import { TopNav } from "@/components/top-nav";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
 import solenaWordmark from "@/assets/solena-wordmark.png.asset.json";
 import spiralLandscape from "@/assets/spiral.png.asset.json";
@@ -177,7 +178,9 @@ export function SolenaPage() {
   return (
     <main className="solena-page">
       <MorphingBackdrop activeId={activeSection} layers={backdropLayers} />
+      <TopNav />
       <SectionNav sections={sections} />
+
 
       <section className="solena-hero" id="hero">
         <div className="solena-noise" aria-hidden="true" />
@@ -266,14 +269,7 @@ export function SolenaPage() {
             <p className="eyebrow">03 / Ecosystem map</p>
             <h2>Everything connects. Nothing operates alone.</h2>
           </div>
-          <div className="ecosystem-layout">
-            <div className="ecosystem-copy reveal-delayed">
-              <p>
-                Solena sits at the center of converging sectors, where brand, built environment,
-                culture, capital, and narrative architecture begin to move as a single field.
-              </p>
-              <p className="micro-copy">Active sector: {activeSector}</p>
-            </div>
+          <div className="ecosystem-layout ecosystem-layout--reflow">
             <div className="ecosystem-map reveal-slower" role="img" aria-label="Interactive Solena ecosystem map">
               <div className="ecosystem-rings" />
               <button
@@ -296,6 +292,13 @@ export function SolenaPage() {
                   <span>{sector.label}</span>
                 </button>
               ))}
+            </div>
+            <div className="ecosystem-copy reveal-delayed">
+              <p>
+                Solena sits at the center of converging sectors, where brand, built environment,
+                culture, capital, and narrative architecture begin to move as a single field.
+              </p>
+              <p className="micro-copy">Active sector: {activeSector}</p>
             </div>
           </div>
         </div>
