@@ -9,19 +9,54 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as ThesisRouteImport } from './routes/thesis'
-import { Route as BuildRouteImport } from './routes/build'
-import { Route as EcosystemRouteImport } from './routes/ecosystem'
 import { Route as StandardRouteImport } from './routes/standard'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as JournalRouteImport } from './routes/journal'
-import { Route as FutureRouteImport } from './routes/future'
 import { Route as InvitationRouteImport } from './routes/invitation'
+import { Route as FutureRouteImport } from './routes/future'
+import { Route as EcosystemRouteImport } from './routes/ecosystem'
+import { Route as BuildRouteImport } from './routes/build'
+import { Route as IndexRouteImport } from './routes/index'
 
+const ThesisRoute = ThesisRouteImport.update({
+  id: '/thesis',
+  path: '/thesis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardRoute = StandardRouteImport.update({
+  id: '/standard',
+  path: '/standard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvitationRoute = InvitationRouteImport.update({
+  id: '/invitation',
+  path: '/invitation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FutureRoute = FutureRouteImport.update({
+  id: '/future',
+  path: '/future',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EcosystemRoute = EcosystemRouteImport.update({
+  id: '/ecosystem',
+  path: '/ecosystem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildRoute = BuildRouteImport.update({
+  id: '/build',
+  path: '/build',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -29,75 +64,145 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ThesisRoute = ThesisRouteImport.update({ id: '/thesis', path: '/thesis', getParentRoute: () => rootRouteImport } as any)
-const BuildRoute = BuildRouteImport.update({ id: '/build', path: '/build', getParentRoute: () => rootRouteImport } as any)
-const EcosystemRoute = EcosystemRouteImport.update({ id: '/ecosystem', path: '/ecosystem', getParentRoute: () => rootRouteImport } as any)
-const StandardRoute = StandardRouteImport.update({ id: '/standard', path: '/standard', getParentRoute: () => rootRouteImport } as any)
-const JournalRoute = JournalRouteImport.update({ id: '/journal', path: '/journal', getParentRoute: () => rootRouteImport } as any)
-const FutureRoute = FutureRouteImport.update({ id: '/future', path: '/future', getParentRoute: () => rootRouteImport } as any)
-const InvitationRoute = InvitationRouteImport.update({ id: '/invitation', path: '/invitation', getParentRoute: () => rootRouteImport } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/thesis': typeof ThesisRoute
   '/build': typeof BuildRoute
   '/ecosystem': typeof EcosystemRoute
-  '/standard': typeof StandardRoute
-  '/journal': typeof JournalRoute
   '/future': typeof FutureRoute
   '/invitation': typeof InvitationRoute
+  '/journal': typeof JournalRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/standard': typeof StandardRoute
+  '/thesis': typeof ThesisRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/thesis': typeof ThesisRoute
   '/build': typeof BuildRoute
   '/ecosystem': typeof EcosystemRoute
-  '/standard': typeof StandardRoute
-  '/journal': typeof JournalRoute
   '/future': typeof FutureRoute
   '/invitation': typeof InvitationRoute
+  '/journal': typeof JournalRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/standard': typeof StandardRoute
+  '/thesis': typeof ThesisRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/thesis': typeof ThesisRoute
   '/build': typeof BuildRoute
   '/ecosystem': typeof EcosystemRoute
-  '/standard': typeof StandardRoute
-  '/journal': typeof JournalRoute
   '/future': typeof FutureRoute
   '/invitation': typeof InvitationRoute
+  '/journal': typeof JournalRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/standard': typeof StandardRoute
+  '/thesis': typeof ThesisRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/thesis' | '/build' | '/ecosystem' | '/standard' | '/journal' | '/future' | '/invitation'
+  fullPaths:
+    | '/'
+    | '/build'
+    | '/ecosystem'
+    | '/future'
+    | '/invitation'
+    | '/journal'
+    | '/sitemap.xml'
+    | '/standard'
+    | '/thesis'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/thesis' | '/build' | '/ecosystem' | '/standard' | '/journal' | '/future' | '/invitation'
-  id: '__root__' | '/' | '/sitemap.xml' | '/thesis' | '/build' | '/ecosystem' | '/standard' | '/journal' | '/future' | '/invitation'
+  to:
+    | '/'
+    | '/build'
+    | '/ecosystem'
+    | '/future'
+    | '/invitation'
+    | '/journal'
+    | '/sitemap.xml'
+    | '/standard'
+    | '/thesis'
+  id:
+    | '__root__'
+    | '/'
+    | '/build'
+    | '/ecosystem'
+    | '/future'
+    | '/invitation'
+    | '/journal'
+    | '/sitemap.xml'
+    | '/standard'
+    | '/thesis'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ThesisRoute: typeof ThesisRoute
   BuildRoute: typeof BuildRoute
   EcosystemRoute: typeof EcosystemRoute
-  StandardRoute: typeof StandardRoute
-  JournalRoute: typeof JournalRoute
   FutureRoute: typeof FutureRoute
   InvitationRoute: typeof InvitationRoute
+  JournalRoute: typeof JournalRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StandardRoute: typeof StandardRoute
+  ThesisRoute: typeof ThesisRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/thesis': {
+      id: '/thesis'
+      path: '/thesis'
+      fullPath: '/thesis'
+      preLoaderRoute: typeof ThesisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standard': {
+      id: '/standard'
+      path: '/standard'
+      fullPath: '/standard'
+      preLoaderRoute: typeof StandardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invitation': {
+      id: '/invitation'
+      path: '/invitation'
+      fullPath: '/invitation'
+      preLoaderRoute: typeof InvitationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/future': {
+      id: '/future'
+      path: '/future'
+      fullPath: '/future'
+      preLoaderRoute: typeof FutureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ecosystem': {
+      id: '/ecosystem'
+      path: '/ecosystem'
+      fullPath: '/ecosystem'
+      preLoaderRoute: typeof EcosystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/build': {
+      id: '/build'
+      path: '/build'
+      fullPath: '/build'
+      preLoaderRoute: typeof BuildRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -107,26 +212,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/thesis': { id: '/thesis'; path: '/thesis'; fullPath: '/thesis'; preLoaderRoute: typeof ThesisRouteImport; parentRoute: typeof rootRouteImport }
-    '/build': { id: '/build'; path: '/build'; fullPath: '/build'; preLoaderRoute: typeof BuildRouteImport; parentRoute: typeof rootRouteImport }
-    '/ecosystem': { id: '/ecosystem'; path: '/ecosystem'; fullPath: '/ecosystem'; preLoaderRoute: typeof EcosystemRouteImport; parentRoute: typeof rootRouteImport }
-    '/standard': { id: '/standard'; path: '/standard'; fullPath: '/standard'; preLoaderRoute: typeof StandardRouteImport; parentRoute: typeof rootRouteImport }
-    '/journal': { id: '/journal'; path: '/journal'; fullPath: '/journal'; preLoaderRoute: typeof JournalRouteImport; parentRoute: typeof rootRouteImport }
-    '/future': { id: '/future'; path: '/future'; fullPath: '/future'; preLoaderRoute: typeof FutureRouteImport; parentRoute: typeof rootRouteImport }
-    '/invitation': { id: '/invitation'; path: '/invitation'; fullPath: '/invitation'; preLoaderRoute: typeof InvitationRouteImport; parentRoute: typeof rootRouteImport }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuildRoute: BuildRoute,
+  EcosystemRoute: EcosystemRoute,
+  FutureRoute: FutureRoute,
+  InvitationRoute: InvitationRoute,
+  JournalRoute: JournalRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ThesisRoute,
-  BuildRoute,
-  EcosystemRoute,
-  StandardRoute,
-  JournalRoute,
-  FutureRoute,
-  InvitationRoute,
+  StandardRoute: StandardRoute,
+  ThesisRoute: ThesisRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
