@@ -74,7 +74,7 @@ function SectorPage() {
       title={sector.headline}
       lede={sector.lede}
       backdrop={{ kind: "image", landscape: backdrop.landscape, portrait: backdrop.portrait }}
-      nextRoute={{ to: "/sector/$slug", label: `Next — ${next.label}` } as unknown as { to: string; label: string }}
+      nextRoute={{ to: "/sector/$slug", label: `Next — ${next.label}`, params: { slug: next.slug } }}
     >
       <section className="solena-section">
         <div className="section-shell section-shell-wide">

@@ -20,7 +20,7 @@ export function PageShell({
   lede?: string;
   backdrop: BackdropMedia;
   children: ReactNode;
-  nextRoute?: { to: string; label: string };
+  nextRoute?: { to: string; label: string; params?: Record<string, string> };
 }) {
   return (
     <main className="solena-page solena-subpage">
@@ -40,7 +40,8 @@ export function PageShell({
       <footer className="subpage-footer">
         <div className="section-shell subpage-footer-inner">
           {nextRoute ? (
-            <Link to={nextRoute.to} className="solena-button">
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <Link to={nextRoute.to as any} params={nextRoute.params as any} className="solena-button">
               <span>{nextRoute.label}</span>
               <small>Continue</small>
             </Link>
