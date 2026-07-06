@@ -291,7 +291,8 @@ export function SolenaPage() {
             <p className="eyebrow">03 / Ecosystem map</p>
             <h2>Everything connects. Nothing operates alone.</h2>
           </div>
-          <div className="ecosystem-layout ecosystem-layout--reflow">
+          <div className="ecosystem-layout ecosystem-layout--reflow ecosystem-with-arc">
+            <OrbitArcControls />
             <div className="ecosystem-map reveal-slower" role="img" aria-label="Interactive Solena ecosystem map">
               <div className="ecosystem-rings" />
               <button
@@ -299,20 +300,23 @@ export function SolenaPage() {
                 className="center-node"
                 onMouseEnter={() => setActiveSector("SOLENA")}
                 onFocus={() => setActiveSector("SOLENA")}
+                onClick={() => navigate({ to: "/ecosystem" })}
+                aria-label="Open the ecosystem chamber"
               >
                 <span>SOLENA</span>
               </button>
               {sectorPositions.map((sector) => (
-                <button
+                <Link
                   key={sector.label}
-                  type="button"
+                  to="/sector/$slug"
+                  params={{ slug: sector.slug }}
                   className={`orbit-node ${activeSector === sector.label ? "is-active" : ""}`}
                   style={{ left: `${sector.x}%`, top: `${sector.y}%` }}
                   onMouseEnter={() => setActiveSector(sector.label)}
                   onFocus={() => setActiveSector(sector.label)}
                 >
                   <span>{sector.label}</span>
-                </button>
+                </Link>
               ))}
             </div>
             <div className="ecosystem-copy reveal-delayed">
@@ -321,6 +325,15 @@ export function SolenaPage() {
                 culture, capital, and narrative architecture begin to move as a single field.
               </p>
               <p className="micro-copy">Active sector: {activeSector}</p>
+              {activeSector !== "SOLENA" ? (
+                <Link
+                  to="/sector/$slug"
+                  params={{ slug: labelToSlug(activeSector) }}
+                  className="micro-link"
+                >
+                  Enter the {activeSector} chamber →
+                </Link>
+              ) : null}
             </div>
           </div>
         </div>
