@@ -5,7 +5,6 @@ import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/secti
 import { TopNav } from "@/components/top-nav";
 import { OrbitArcControls } from "@/components/orbit-arc-controls";
 import { SECTORS, labelToSlug } from "@/lib/sectors";
-import { TopNav } from "@/components/top-nav";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
 import solenaWordmark from "@/assets/solena-wordmark.png.asset.json";
 import spiralLandscape from "@/assets/spiral.png.asset.json";
