@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/section-nav";
+import { TopNav } from "@/components/top-nav";
+import { OrbitArcControls } from "@/components/orbit-arc-controls";
+import { SECTORS, labelToSlug } from "@/lib/sectors";
 import { TopNav } from "@/components/top-nav";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
 import solenaWordmark from "@/assets/solena-wordmark.png.asset.json";
@@ -148,15 +152,44 @@ function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: Back
 }
 
 export function SolenaPage() {
-  const [activeSector, setActiveSector] = useState<string>(orbitSectors[0]);
+  const navigate = useNavigate();
+  const [activeSector, setActiveSector] = useState<string>(SECTORS[0].label);
+
+  // Deep-link: read ?sector=slug or #sector=slug on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const hashMatch = window.location.hash.match(/sector=([\w-]+)/);
+    const slug = params.get("sector") ?? hashMatch?.[1];
+    if (!slug) return;
+    const found = SECTORS.find((s) => s.slug === slug);
+    if (found) {
+      setActiveSector(found.label);
+      // scroll ecosystem into view
+      requestAnimationFrame(() => {
+        document.getElementById("ecosystem")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, []);
+
+  // Write ?sector=slug to URL when active sector changes (without navigation)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (activeSector === "SOLENA") return;
+    const slug = labelToSlug(activeSector);
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("sector") === slug) return;
+    url.searchParams.set("sector", slug);
+    window.history.replaceState({}, "", url.toString());
+  }, [activeSector]);
 
   const sectorPositions = useMemo(
     () =>
-      orbitSectors.map((label, index) => {
-        const angle = (index / orbitSectors.length) * Math.PI * 2 - Math.PI / 2;
+      SECTORS.map((s, index) => {
+        const angle = (index / SECTORS.length) * Math.PI * 2 - Math.PI / 2;
         const x = 50 + Math.cos(angle) * 37;
         const y = 50 + Math.sin(angle) * 37;
-        return { label, x, y };
+        return { label: s.label, slug: s.slug, x, y };
       }),
     [],
   );
