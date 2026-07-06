@@ -17,16 +17,6 @@ import futureLandscape from "@/assets/Gemini_Generated_Image_ttgdtyttgdtyttgd.pn
 import futurePortrait from "@/assets/resonance-2-potrait.png.asset.json";
 import invitationPortrait from "@/assets/g-01.1-potrait.png.asset.json";
 
-const orbitSectors = [
-  "Real Estate",
-  "Hospitality",
-  "Luxury",
-  "Media",
-  "Architecture",
-  "Culture",
-  "Capital",
-  "Technology",
-] as const;
 
 const journalEntries = [
   "The Architecture of Gravity",
