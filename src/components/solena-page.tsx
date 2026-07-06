@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import { SectionNav, AnimatedLines, type SectionEntry } from "@/components/section-nav";
 import { TopNav } from "@/components/top-nav";
+import { OrbitArcControls } from "@/components/orbit-arc-controls";
+import { SECTORS, labelToSlug } from "@/lib/sectors";
 import solenaLogo from "@/assets/solena-logo-removebg-preview.png.asset.json";
 import solenaWordmark from "@/assets/solena-wordmark.png.asset.json";
 import spiralLandscape from "@/assets/spiral.png.asset.json";
@@ -14,16 +17,6 @@ import futureLandscape from "@/assets/Gemini_Generated_Image_ttgdtyttgdtyttgd.pn
 import futurePortrait from "@/assets/resonance-2-potrait.png.asset.json";
 import invitationPortrait from "@/assets/g-01.1-potrait.png.asset.json";
 
-const orbitSectors = [
-  "Real Estate",
-  "Hospitality",
-  "Luxury",
-  "Media",
-  "Architecture",
-  "Culture",
-  "Capital",
-  "Technology",
-] as const;
 
 const journalEntries = [
   "The Architecture of Gravity",
@@ -148,15 +141,44 @@ function MorphingBackdrop({ activeId, layers }: { activeId: string; layers: Back
 }
 
 export function SolenaPage() {
-  const [activeSector, setActiveSector] = useState<string>(orbitSectors[0]);
+  const navigate = useNavigate();
+  const [activeSector, setActiveSector] = useState<string>(SECTORS[0].label);
+
+  // Deep-link: read ?sector=slug or #sector=slug on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const hashMatch = window.location.hash.match(/sector=([\w-]+)/);
+    const slug = params.get("sector") ?? hashMatch?.[1];
+    if (!slug) return;
+    const found = SECTORS.find((s) => s.slug === slug);
+    if (found) {
+      setActiveSector(found.label);
+      // scroll ecosystem into view
+      requestAnimationFrame(() => {
+        document.getElementById("ecosystem")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, []);
+
+  // Write ?sector=slug to URL when active sector changes (without navigation)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (activeSector === "SOLENA") return;
+    const slug = labelToSlug(activeSector);
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("sector") === slug) return;
+    url.searchParams.set("sector", slug);
+    window.history.replaceState({}, "", url.toString());
+  }, [activeSector]);
 
   const sectorPositions = useMemo(
     () =>
-      orbitSectors.map((label, index) => {
-        const angle = (index / orbitSectors.length) * Math.PI * 2 - Math.PI / 2;
+      SECTORS.map((s, index) => {
+        const angle = (index / SECTORS.length) * Math.PI * 2 - Math.PI / 2;
         const x = 50 + Math.cos(angle) * 37;
         const y = 50 + Math.sin(angle) * 37;
-        return { label, x, y };
+        return { label: s.label, slug: s.slug, x, y };
       }),
     [],
   );
@@ -269,7 +291,8 @@ export function SolenaPage() {
             <p className="eyebrow">03 / Ecosystem map</p>
             <h2>Everything connects. Nothing operates alone.</h2>
           </div>
-          <div className="ecosystem-layout ecosystem-layout--reflow">
+          <div className="ecosystem-layout ecosystem-layout--reflow ecosystem-with-arc">
+            <OrbitArcControls />
             <div className="ecosystem-map reveal-slower" role="img" aria-label="Interactive Solena ecosystem map">
               <div className="ecosystem-rings" />
               <button
@@ -277,20 +300,23 @@ export function SolenaPage() {
                 className="center-node"
                 onMouseEnter={() => setActiveSector("SOLENA")}
                 onFocus={() => setActiveSector("SOLENA")}
+                onClick={() => navigate({ to: "/ecosystem" })}
+                aria-label="Open the ecosystem chamber"
               >
                 <span>SOLENA</span>
               </button>
               {sectorPositions.map((sector) => (
-                <button
+                <Link
                   key={sector.label}
-                  type="button"
+                  to="/sector/$slug"
+                  params={{ slug: sector.slug }}
                   className={`orbit-node ${activeSector === sector.label ? "is-active" : ""}`}
                   style={{ left: `${sector.x}%`, top: `${sector.y}%` }}
                   onMouseEnter={() => setActiveSector(sector.label)}
                   onFocus={() => setActiveSector(sector.label)}
                 >
                   <span>{sector.label}</span>
-                </button>
+                </Link>
               ))}
             </div>
             <div className="ecosystem-copy reveal-delayed">
@@ -299,6 +325,15 @@ export function SolenaPage() {
                 culture, capital, and narrative architecture begin to move as a single field.
               </p>
               <p className="micro-copy">Active sector: {activeSector}</p>
+              {activeSector !== "SOLENA" ? (
+                <Link
+                  to="/sector/$slug"
+                  params={{ slug: labelToSlug(activeSector) }}
+                  className="micro-link"
+                >
+                  Enter the {activeSector} chamber →
+                </Link>
+              ) : null}
             </div>
           </div>
         </div>

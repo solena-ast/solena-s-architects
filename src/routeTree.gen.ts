@@ -18,6 +18,7 @@ import { Route as FutureRouteImport } from './routes/future'
 import { Route as EcosystemRouteImport } from './routes/ecosystem'
 import { Route as BuildRouteImport } from './routes/build'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SectorSlugRouteImport } from './routes/sector.$slug'
 
 const ThesisRoute = ThesisRouteImport.update({
   id: '/thesis',
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SectorSlugRoute = SectorSlugRouteImport.update({
+  id: '/sector/$slug',
+  path: '/sector/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/standard': typeof StandardRoute
   '/thesis': typeof ThesisRoute
+  '/sector/$slug': typeof SectorSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/standard': typeof StandardRoute
   '/thesis': typeof ThesisRoute
+  '/sector/$slug': typeof SectorSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/standard': typeof StandardRoute
   '/thesis': typeof ThesisRoute
+  '/sector/$slug': typeof SectorSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/standard'
     | '/thesis'
+    | '/sector/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/standard'
     | '/thesis'
+    | '/sector/$slug'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/standard'
     | '/thesis'
+    | '/sector/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StandardRoute: typeof StandardRoute
   ThesisRoute: typeof ThesisRoute
+  SectorSlugRoute: typeof SectorSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sector/$slug': {
+      id: '/sector/$slug'
+      path: '/sector/$slug'
+      fullPath: '/sector/$slug'
+      preLoaderRoute: typeof SectorSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StandardRoute: StandardRoute,
   ThesisRoute: ThesisRoute,
+  SectorSlugRoute: SectorSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

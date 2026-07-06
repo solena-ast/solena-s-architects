@@ -1,39 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-type Settings = {
-  motion: "reduced" | "standard" | "cinematic";
-  intensity: "subtle" | "balanced" | "strong";
-  contrast: "low" | "medium" | "high";
-};
+import { useAtmosphere, ATMOSPHERE_DEFAULTS, type Atmosphere } from "@/hooks/use-atmosphere";
 
-const DEFAULTS: Settings = {
-  motion: "cinematic",
-  intensity: "balanced",
-  contrast: "medium",
-};
-
-const KEY = "solena.settings.v1";
-
-function applySettings(s: Settings) {
-  if (typeof document === "undefined") return;
-  const root = document.documentElement;
-  root.dataset.motion = s.motion;
-  root.dataset.intensity = s.intensity;
-  root.dataset.contrast = s.contrast;
-}
-
-function readSettings(): Settings {
-  if (typeof window === "undefined") return DEFAULTS;
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return DEFAULTS;
-    return { ...DEFAULTS, ...(JSON.parse(raw) as Partial<Settings>) };
-  } catch {
-    return DEFAULTS;
-  }
-}
-
-const groups: Array<{ key: keyof Settings; label: string; options: string[] }> = [
+const groups: Array<{ key: keyof Atmosphere; label: string; options: string[] }> = [
   { key: "motion", label: "Motion", options: ["reduced", "standard", "cinematic"] },
   { key: "intensity", label: "Image presence", options: ["subtle", "balanced", "strong"] },
   { key: "contrast", label: "Contrast", options: ["low", "medium", "high"] },
@@ -41,27 +10,9 @@ const groups: Array<{ key: keyof Settings; label: string; options: string[] }> =
 
 export function AdjustmentGear() {
   const [open, setOpen] = useState(false);
-  const [settings, setSettings] = useState<Settings>(DEFAULTS);
+  const [settings, update, reset] = useAtmosphere();
   const panelRef = useRef<HTMLDivElement | null>(null);
 
-  // Hydrate once on client
-  useEffect(() => {
-    const s = readSettings();
-    setSettings(s);
-    applySettings(s);
-  }, []);
-
-  // Persist + apply on change
-  useEffect(() => {
-    applySettings(settings);
-    try {
-      window.localStorage.setItem(KEY, JSON.stringify(settings));
-    } catch {
-      /* noop */
-    }
-  }, [settings]);
-
-  // Close on outside click / escape
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
@@ -112,9 +63,7 @@ export function AdjustmentGear() {
                       role="radio"
                       aria-checked={isActive}
                       className={isActive ? "is-active" : ""}
-                      onClick={() =>
-                        setSettings((s) => ({ ...s, [g.key]: opt } as Settings))
-                      }
+                      onClick={() => update({ [g.key]: opt } as Partial<Atmosphere>)}
                     >
                       {opt}
                     </button>
@@ -126,7 +75,7 @@ export function AdjustmentGear() {
           <button
             type="button"
             className="gear-reset"
-            onClick={() => setSettings(DEFAULTS)}
+            onClick={() => reset()}
           >
             Reset
           </button>
@@ -135,3 +84,5 @@ export function AdjustmentGear() {
     </div>
   );
 }
+
+export { ATMOSPHERE_DEFAULTS };
