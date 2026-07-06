@@ -91,7 +91,6 @@ export const SECTORS: readonly Sector[] = [
     label: "Architecture",
     eyebrow: "Sector · Architecture",
     headline: "Buildings that intend to outlast their brief.",
-    lete: "",
     lede:
       "We treat architecture as the physical residue of ideology. Programme is temporary. Proportion is not.",
     principles: [
@@ -105,7 +104,7 @@ export const SECTORS: readonly Sector[] = [
       ["A footprint", "A field"],
     ],
     closing: "What we design should still make sense in a century.",
-  } as unknown as Sector,
+  },
   {
     slug: "culture",
     label: "Culture",

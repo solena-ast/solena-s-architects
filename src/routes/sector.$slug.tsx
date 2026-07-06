@@ -79,7 +79,7 @@ function SectorPage() {
       <section className="solena-section">
         <div className="section-shell section-shell-wide">
           <div className="sector-principles">
-            {sector.principles.map((p, i) => (
+            {sector.principles.map((p: string, i: number) => (
               <article key={p} className="sector-principle reveal" style={{ animationDelay: `${i * 140}ms` }}>
                 <span className="card-index">0{i + 1}</span>
                 <p>{p}</p>
@@ -96,7 +96,7 @@ function SectorPage() {
             <h2>What we shift.</h2>
           </div>
           <div className="transformation-list">
-            {sector.transformations.map(([from, to], i) => (
+            {sector.transformations.map(([from, to]: [string, string], i: number) => (
               <div className="transformation-row reveal" style={{ animationDelay: `${i * 120}ms` }} key={from}>
                 <span>{from}</span>
                 <i aria-hidden="true" />
