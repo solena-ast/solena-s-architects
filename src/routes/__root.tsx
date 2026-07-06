@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AdjustmentGear } from "../components/adjustment-gear";
+import { ScrollRail } from "../components/scroll-rail";
 
 function NotFoundComponent() {
   return (
@@ -138,6 +139,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <ScrollRail />
       <AdjustmentGear />
     </QueryClientProvider>
   );
