@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { PageShell } from "@/components/page-shell";
 import { OrbitArcControls } from "@/components/orbit-arc-controls";
@@ -21,24 +21,8 @@ export const Route = createFileRoute("/ecosystem")({
 function EcosystemPage() {
   const navigate = useNavigate();
   const [activeSector, setActiveSector] = useState<string>(SECTORS[0].label);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const hashMatch = window.location.hash.match(/sector=([\w-]+)/);
-    const slug = params.get("sector") ?? hashMatch?.[1];
-    const found = SECTORS.find((s) => s.slug === slug);
-    if (found) setActiveSector(found.label);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const slug = labelToSlug(activeSector);
-    const url = new URL(window.location.href);
-    if (url.searchParams.get("sector") === slug) return;
-    url.searchParams.set("sector", slug);
-    window.history.replaceState({}, "", url.toString());
-  }, [activeSector]);
+  const [telescope, setTelescope] = useState<{ x: number; y: number } | null>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
 
   const sectorPositions = useMemo(
     () =>
@@ -51,6 +35,45 @@ function EcosystemPage() {
     [],
   );
 
+  // Deep-link: read ?sector= or #sector=, activate + trigger cinematic telescope pan.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const hashMatch = window.location.hash.match(/sector=([\w-]+)/);
+    const slug = params.get("sector") ?? hashMatch?.[1];
+    if (!slug) return;
+    const found = SECTORS.find((s) => s.slug === slug);
+    if (!found) return;
+    const pos = sectorPositions.find((p) => p.slug === slug);
+    if (!pos) return;
+
+    setActiveSector(found.label);
+    // pan vector = center (50,50) minus node position, so node drifts toward center
+    setTelescope({ x: 50 - pos.x, y: 50 - pos.y });
+
+    // release the cinematic pan after the transition settles
+    const t = window.setTimeout(() => setTelescope(null), 2600);
+    return () => window.clearTimeout(t);
+  }, [sectorPositions]);
+
+  // Keep URL synced with active sector (without disturbing history).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const slug = labelToSlug(activeSector);
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("sector") === slug) return;
+    url.searchParams.set("sector", slug);
+    window.history.replaceState({}, "", url.toString());
+  }, [activeSector]);
+
+  const mapStyle = telescope
+    ? ({
+        "--tele-x": `${telescope.x * 0.55}%`,
+        "--tele-y": `${telescope.y * 0.55}%`,
+        "--tele-scale": "1.18",
+      } as React.CSSProperties)
+    : ({ "--tele-x": "0%", "--tele-y": "0%", "--tele-scale": "1" } as React.CSSProperties);
+
   return (
     <PageShell
       eyebrow="03 / Ecosystem map"
@@ -61,7 +84,13 @@ function EcosystemPage() {
       <section className="solena-section ecosystem-section ecosystem-section--full">
         <div className="ecosystem-fullbleed ecosystem-with-arc">
           <OrbitArcControls />
-          <div className="ecosystem-map reveal-slower" role="img" aria-label="Interactive Solena ecosystem map">
+          <div
+            ref={mapRef}
+            className={`ecosystem-map reveal-slower ${telescope ? "is-telescoping" : ""}`}
+            style={mapStyle}
+            role="img"
+            aria-label="Interactive Solena ecosystem map"
+          >
             <div className="ecosystem-rings" />
             <button
               type="button"
