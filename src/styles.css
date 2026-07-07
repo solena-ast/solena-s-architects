@@ -1600,12 +1600,13 @@ html[data-motion="cinematic"] .backdrop-layer.is-active .backdrop-video {
 ========================================================= */
 .scroll-rail {
   position: fixed;
-  top: 15vh;
-  bottom: 15vh;
-  right: 10px;
+  top: 14vh;
+  bottom: 14vh;
+  right: max(10px, env(safe-area-inset-right));
   width: 1px;
   z-index: 55;
   pointer-events: none;
+  contain: layout paint;
 }
 .scroll-rail-track,
 .scroll-rail-fill {
@@ -1614,16 +1615,26 @@ html[data-motion="cinematic"] .backdrop-layer.is-active .backdrop-video {
   width: 1px;
 }
 .scroll-rail-track {
-  background: color-mix(in oklab, var(--foreground) 10%, transparent);
+  background: color-mix(in oklab, var(--foreground) 9%, transparent);
 }
 .scroll-rail-fill {
   transform-origin: top center;
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--accent) 80%, var(--foreground) 20%),
-    color-mix(in oklab, var(--foreground) 60%, transparent)
+    color-mix(in oklab, var(--accent) 85%, var(--foreground) 15%),
+    color-mix(in oklab, var(--foreground) 55%, transparent)
   );
-  transition: transform 140ms linear;
+  transition: transform 120ms linear;
+  will-change: transform;
+}
+.scroll-rail-tick {
+  position: absolute;
+  left: 50%;
+  width: 6px;
+  height: 1px;
+  background: color-mix(in oklab, var(--foreground) 28%, transparent);
+  transform: translate(-50%, -50%);
+  opacity: 0.55;
 }
 .scroll-rail-caret {
   position: absolute;
@@ -1634,16 +1645,41 @@ html[data-motion="cinematic"] .backdrop-layer.is-active .backdrop-video {
   background: color-mix(in oklab, var(--accent) 90%, white 10%);
   transform: translate(-50%, -50%);
   box-shadow: 0 0 12px color-mix(in oklab, var(--accent) 70%, transparent);
-  transition: top 140ms linear;
+  transition: top 120ms linear;
+  will-change: top;
 }
-/* Nudge inward on very small screens so it doesn't overlap the gear */
 @media (max-width: 768px) {
-  .scroll-rail { right: 6px; top: 12vh; bottom: 20vh; }
+  .scroll-rail { right: max(6px, env(safe-area-inset-right)); top: 12vh; bottom: 18vh; }
   .scroll-rail-caret { width: 5px; height: 5px; }
+  .scroll-rail-tick { width: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-rail-fill, .scroll-rail-caret { transition: none; }
 }
 
-/* Ensure it appears even on subpages (overrides earlier blanket hide) */
 .solena-subpage .scroll-rail { display: block !important; }
+
+/* Cinematic telescope pan for deep-linked orbit position */
+.ecosystem-map {
+  transform: translate(var(--tele-x, 0%), var(--tele-y, 0%)) scale(var(--tele-scale, 1));
+  transition: transform 2200ms cubic-bezier(0.16, 0.84, 0.24, 1);
+  will-change: transform;
+}
+.ecosystem-map.is-telescoping .orbit-node.is-active {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--accent) 60%, transparent),
+    0 0 60px color-mix(in oklab, var(--accent) 55%, transparent);
+  animation: telescopePulse 1600ms ease-out;
+}
+@keyframes telescopePulse {
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  40%  { transform: translate(-50%, -50%) scale(1.16); }
+  100% { transform: translate(-50%, -50%) scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ecosystem-map { transition: none; transform: none !important; }
+  .ecosystem-map.is-telescoping .orbit-node.is-active { animation: none; }
+}
 
 /* =========================================================
    ORBIT ARC — radial atmosphere controls, left of the orbit
